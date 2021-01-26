@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ConsoleTables;
 
 namespace ApiClient
 {
@@ -11,15 +12,18 @@ namespace ApiClient
         static async Task Main(string[] args)
         {
             var client = new HttpClient();
-            var responseAsStream = await client.GetStreamAsync("https://swapi.dev/api/people/");
+            var responseAsStream = await client.GetStreamAsync($"https://swapi.dev/api/people/");
             var peopleSW = await JsonSerializer.DeserializeAsync<ResultsPeopleContainer>(responseAsStream);
 
-            foreach (var singlePerson in peopleSW.results)
+
+            var table = new ConsoleTable("Name", "Average Height", "Birth Year", "Gender");
+            foreach (var person in peopleSW.results)
             {
-                Console.WriteLine($"{singlePerson.Name}");
+                table.AddRow(person.Name, person.Height, person.BirthYear, person.Gender);
 
             }
-            // var table = new ConsoleTables("Name", "")
+            table.Write();
+
           }
       }
   }
